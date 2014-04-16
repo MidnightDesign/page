@@ -17,7 +17,7 @@ class Page implements PageInterface
     /**
      * @var BlockInterface[]
      */
-    private $blocks;
+    private $blocks = array();
 
     /**
      * @return string
