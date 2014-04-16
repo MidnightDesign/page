@@ -11,6 +11,10 @@ class Page implements PageInterface
      */
     private $id;
     /**
+     * @var string
+     */
+    private $name;
+    /**
      * @var BlockInterface[]
      */
     private $blocks;
@@ -25,6 +29,7 @@ class Page implements PageInterface
 
     /**
      * @param string $id
+     *
      * @return void
      */
     public function setId($id)
@@ -38,5 +43,21 @@ class Page implements PageInterface
     public function addBlock(BlockInterface $block)
     {
         $this->blocks[] = $block;
+    }
+
+    /**
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * @param string $name
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
     }
 } 
