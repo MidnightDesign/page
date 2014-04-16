@@ -11,7 +11,13 @@ interface PageInterface
 
     /**
      * @param string $id
+     *
      * @return void
      */
     public function setId($id);
+
+    /**
+     * @return string
+     */
+    public function getName();
 }
