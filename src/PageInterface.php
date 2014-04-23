@@ -2,6 +2,8 @@
 
 namespace Midnight\Page;
 
+use Midnight\Block\BlockInterface;
+
 interface PageInterface
 {
     /**
@@ -17,7 +19,14 @@ interface PageInterface
     public function setId($id);
 
     /**
-     * @return string
+     * @return BlockInterface[]
      */
-    public function getName();
+    public function getBlocks();
+
+    /**
+     * @param BlockInterface $block
+     *
+     * @return void
+     */
+    public function addBlock(BlockInterface $block);
 }

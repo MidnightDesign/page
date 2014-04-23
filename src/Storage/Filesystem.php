@@ -18,6 +18,7 @@ class Filesystem implements StorageInterface
 
     /**
      * @param PageInterface $page
+     *
      * @return void
      */
     public function save(PageInterface $page)
@@ -32,6 +33,7 @@ class Filesystem implements StorageInterface
 
     /**
      * @param string $id
+     *
      * @return string
      */
     private function buildPath($id)
@@ -58,10 +60,27 @@ class Filesystem implements StorageInterface
 
     /**
      * @param string $id
+     *
      * @return PageInterface
      */
     public function load($id)
     {
         return unserialize(file_get_contents($this->buildPath($id)));
+    }
+
+    /**
+     * @return PageInterface[]
+     */
+    public function getAll()
+    {
+        $pages = array();
+        $dir = $this->getDirectory();
+        $handle = opendir($dir);
+        while ($file = readdir($handle)) {
+            if (is_file($dir . DIRECTORY_SEPARATOR . $file)) {
+                $pages[] = $this->load($file);
+            }
+        }
+        return $pages;
     }
 }

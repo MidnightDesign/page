@@ -60,4 +60,15 @@ class Page implements PageInterface
     {
         $this->name = $name;
     }
-} 
+
+    /**
+     * @return BlockInterface[]
+     */
+    public function getBlocks()
+    {
+        if (empty($this->blocks)) {
+            $this->blocks = array();
+        }
+        return $this->blocks;
+    }
+}

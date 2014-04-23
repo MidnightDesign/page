@@ -7,6 +7,12 @@ use Doctrine\Common\Persistence\ObjectRepository;
 use Midnight\Page\PageInterface;
 use RuntimeException;
 
+/**
+ * Class Doctrine
+ * @package Midnight\Page\Storage
+ *
+ * BROKEN!
+ */
 class Doctrine implements StorageInterface
 {
     /**
@@ -20,6 +26,7 @@ class Doctrine implements StorageInterface
 
     /**
      * @param PageInterface $page
+     *
      * @return void
      */
     public function save(PageInterface $page)
@@ -81,6 +88,7 @@ class Doctrine implements StorageInterface
 
     /**
      * @param string $id
+     *
      * @return PageInterface
      */
     public function load($id)
