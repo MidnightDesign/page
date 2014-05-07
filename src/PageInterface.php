@@ -29,4 +29,9 @@ interface PageInterface
      * @return void
      */
     public function addBlock(BlockInterface $block);
+
+    /**
+     * @return string
+     */
+    public function getName();
 }
