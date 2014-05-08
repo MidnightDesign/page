@@ -2,6 +2,7 @@
 
 namespace Midnight\Page\Storage;
 
+use Midnight\Block\Storage\StorageInterface as BlockStorageInterface;
 use Midnight\Page\PageInterface;
 
 class Filesystem implements StorageInterface
@@ -11,8 +12,14 @@ class Filesystem implements StorageInterface
      */
     private $directory;
 
-    function __construct($directory)
+    /**
+     * @var BlockStorageInterface
+     */
+    private $blockStorage;
+
+    function __construct($directory, BlockStorageInterface $blockStorage)
     {
+        $this->blockStorage = $blockStorage;
         $this->setDirectory($directory);
     }
 
@@ -27,6 +34,9 @@ class Filesystem implements StorageInterface
         if (!$id) {
             $page->setId(uniqid());
             $id = $page->getId();
+        }
+        foreach ($page->getBlocks() as $block) {
+            $this->blockStorage->save($block);
         }
         file_put_contents($this->buildPath($id), serialize($page));
     }
@@ -65,7 +75,19 @@ class Filesystem implements StorageInterface
      */
     public function load($id)
     {
-        return unserialize(file_get_contents($this->buildPath($id)));
+        /** @var PageInterface $page */
+        $page = unserialize(file_get_contents($this->buildPath($id)));
+
+        $blocks = array();
+        foreach ($page->getBlocks() as $key => $block) {
+            $blocks[] = $this->blockStorage->load($block->getId());
+        }
+        $pageRefl = new \ReflectionObject($page);
+        $blocksRefl = $pageRefl->getProperty('blocks');
+        $blocksRefl->setAccessible(true);
+        $blocksRefl->setValue($page, $blocks);
+
+        return $page;
     }
 
     /**
