@@ -71,4 +71,34 @@ class Page implements PageInterface
         }
         return $this->blocks;
     }
+
+    /**
+     * @param string $blockId
+     *
+     * @return BlockInterface
+     */
+    public function getBlock($blockId)
+    {
+        foreach ($this->getBlocks() as $block) {
+            if ($block->getId() === $blockId) {
+                return $block;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * @param BlockInterface $block
+     *
+     * @return void
+     */
+    public function removeBlock(BlockInterface $block)
+    {
+        $blocks = $this->getBlocks();
+        $keys = array_keys($blocks, $block);
+        foreach ($keys as $k) {
+            unset($blocks[$k]);
+        }
+        $this->blocks = $blocks;
+    }
 }

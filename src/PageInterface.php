@@ -34,4 +34,18 @@ interface PageInterface
      * @return string
      */
     public function getName();
+
+    /**
+     * @param string $blockId
+     *
+     * @return BlockInterface
+     */
+    public function getBlock($blockId);
+
+    /**
+     * @param BlockInterface $block
+     *
+     * @return void
+     */
+    public function removeBlock(BlockInterface $block);
 }
