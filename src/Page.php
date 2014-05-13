@@ -101,4 +101,26 @@ class Page implements PageInterface
         }
         $this->blocks = $blocks;
     }
+
+    /**
+     * @param BlockInterface $block
+     * @param BlockInterface $otherBlock
+     * @param string         $beforeOrAfter
+     *
+     * @return void
+     */
+    public function moveBlock($block, $otherBlock, $beforeOrAfter)
+    {
+        function moveElement(&$array, $from, $to)
+        {
+            $out = array_splice($array, $from, 1);
+            array_splice($array, $to, 0, $out);
+        }
+
+        $blocks = $this->getBlocks();
+        $offset = $beforeOrAfter === self::BEFORE ? 0 : 1;
+        moveElement($blocks, array_search($block, $blocks, true), array_search($otherBlock, $blocks, true) + $offset);
+
+        $this->blocks = $blocks;
+    }
 }

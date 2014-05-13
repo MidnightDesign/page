@@ -6,6 +6,8 @@ use Midnight\Block\BlockInterface;
 
 interface PageInterface
 {
+    const BEFORE = 'before';
+    const AFTER = 'after';
     /**
      * @return string
      */
@@ -48,4 +50,13 @@ interface PageInterface
      * @return void
      */
     public function removeBlock(BlockInterface $block);
+
+    /**
+     * @param BlockInterface $block
+     * @param BlockInterface $otherBlock
+     * @param string         $beforeOrAfter
+     *
+     * @return void
+     */
+    public function moveBlock($block, $otherBlock, $beforeOrAfter);
 }
