@@ -79,7 +79,7 @@ class Filesystem implements StorageInterface
         $page = unserialize(file_get_contents($this->buildPath($id)));
 
         $blocks = array();
-        foreach ($page->getBlocks() as $key => $block) {
+        foreach ($page->getBlocks() as $block) {
             $blocks[] = $this->blockStorage->load($block->getId());
         }
         $pageRefl = new \ReflectionObject($page);
