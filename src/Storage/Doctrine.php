@@ -5,13 +5,10 @@ namespace Midnight\Page\Storage;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Midnight\Page\PageInterface;
-use RuntimeException;
 
 /**
  * Class Doctrine
  * @package Midnight\Page\Storage
- *
- * BROKEN!
  */
 class Doctrine implements StorageInterface
 {
@@ -22,7 +19,15 @@ class Doctrine implements StorageInterface
     /**
      * @var string
      */
-    private $className;
+    private $className = 'Midnight\Page\Page';
+
+    /**
+     * @param ObjectManager $objectManager
+     */
+    public function setObjectManager(ObjectManager $objectManager)
+    {
+        $this->objectManager = $objectManager;
+    }
 
     /**
      * @param PageInterface $page
@@ -31,59 +36,17 @@ class Doctrine implements StorageInterface
      */
     public function save(PageInterface $page)
     {
-        $documentManager = $this->getObjectManager();
-        $documentManager->persist($page);
-        $documentManager->flush();
+        $objectManager = $this->getObjectManager();
+        $objectManager->persist($page);
+        $objectManager->flush();
     }
 
     /**
-     * @throws RuntimeException
-     * @return ObjectRepository
-     */
-    public function getRepository()
-    {
-        $className = $this->getClassName();
-        if (!$className) {
-            throw new RuntimeException('No target class set.');
-        }
-        return $this->getObjectManager()->getRepository($className);
-    }
-
-    /**
-     * @throws RuntimeException
      * @return ObjectManager
      */
-    public function getObjectManager()
+    private function getObjectManager()
     {
-        $objectManager = $this->objectManager;
-        if (!$objectManager) {
-            throw new RuntimeException('No object manager set.');
-        }
-        return $objectManager;
-    }
-
-    /**
-     * @param ObjectManager $objectManager
-     */
-    public function setObjectManager($objectManager)
-    {
-        $this->objectManager = $objectManager;
-    }
-
-    /**
-     * @return string
-     */
-    public function getClassName()
-    {
-        return $this->className;
-    }
-
-    /**
-     * @param string $className
-     */
-    public function setClassName($className)
-    {
-        $this->className = $className;
+        return $this->objectManager;
     }
 
     /**
@@ -93,6 +56,23 @@ class Doctrine implements StorageInterface
      */
     public function load($id)
     {
-        return $this->getRepository()->find($id);
+        $page = $this->getRepository()->find($id);
+        return $page;
+    }
+
+    /**
+     * @return PageInterface[]
+     */
+    public function getAll()
+    {
+        return $this->getRepository()->findAll();
+    }
+
+    /**
+     * @return ObjectRepository
+     */
+    private function getRepository()
+    {
+        return $this->getObjectManager()->getRepository($this->className);
     }
 }
