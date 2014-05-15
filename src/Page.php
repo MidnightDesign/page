@@ -3,6 +3,7 @@
 namespace Midnight\Page;
 
 use Midnight\Block\BlockInterface;
+use Traversable;
 
 class Page implements PageInterface
 {
@@ -15,7 +16,7 @@ class Page implements PageInterface
      */
     private $name;
     /**
-     * @var BlockInterface[]
+     * @var BlockInterface[]|Traversable
      */
     private $blocks = array();
 
@@ -68,6 +69,9 @@ class Page implements PageInterface
     {
         if (empty($this->blocks)) {
             $this->blocks = array();
+        }
+        if ($this->blocks instanceof Traversable) {
+            $this->blocks = iterator_to_array($this->blocks);
         }
         return $this->blocks;
     }
