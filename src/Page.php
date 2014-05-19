@@ -19,6 +19,10 @@ class Page implements PageInterface
      * @var BlockInterface[]|Traversable
      */
     private $blocks = array();
+    /**
+     * @var string
+     */
+    private $slug;
 
     /**
      * @return string
@@ -63,20 +67,6 @@ class Page implements PageInterface
     }
 
     /**
-     * @return BlockInterface[]
-     */
-    public function getBlocks()
-    {
-        if (empty($this->blocks)) {
-            $this->blocks = array();
-        }
-        if ($this->blocks instanceof Traversable) {
-            $this->blocks = iterator_to_array($this->blocks);
-        }
-        return $this->blocks;
-    }
-
-    /**
      * @param string $blockId
      *
      * @return BlockInterface
@@ -89,6 +79,20 @@ class Page implements PageInterface
             }
         }
         return null;
+    }
+
+    /**
+     * @return BlockInterface[]
+     */
+    public function getBlocks()
+    {
+        if (empty($this->blocks)) {
+            $this->blocks = array();
+        }
+        if ($this->blocks instanceof Traversable) {
+            $this->blocks = iterator_to_array($this->blocks);
+        }
+        return $this->blocks;
     }
 
     /**
@@ -126,5 +130,21 @@ class Page implements PageInterface
         moveElement($blocks, array_search($block, $blocks, true), array_search($otherBlock, $blocks, true) + $offset);
 
         $this->blocks = $blocks;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSlug()
+    {
+        return $this->slug;
+    }
+
+    /**
+     * @param string $slug
+     */
+    public function setSlug($slug)
+    {
+        $this->slug = $slug;
     }
 }

@@ -8,6 +8,7 @@ interface PageInterface
 {
     const BEFORE = 'before';
     const AFTER = 'after';
+
     /**
      * @return string
      */
@@ -59,4 +60,16 @@ interface PageInterface
      * @return void
      */
     public function moveBlock($block, $otherBlock, $beforeOrAfter);
+
+    /**
+     * @param $slug
+     *
+     * @return void
+     */
+    public function setSlug($slug);
+
+    /**
+     * @return string
+     */
+    public function getSlug();
 }

@@ -10,7 +10,7 @@ use Midnight\Page\PageInterface;
  * Class Doctrine
  * @package Midnight\Page\Storage
  */
-class Doctrine implements StorageInterface
+class Doctrine extends AbstractStorage implements StorageInterface
 {
     /**
      * @var ObjectManager
@@ -36,6 +36,7 @@ class Doctrine implements StorageInterface
      */
     public function save(PageInterface $page)
     {
+        $this->ensureSlug($page);
         $objectManager = $this->getObjectManager();
         $objectManager->persist($page);
         $objectManager->flush();
@@ -74,5 +75,27 @@ class Doctrine implements StorageInterface
     private function getRepository()
     {
         return $this->getObjectManager()->getRepository($this->className);
+    }
+
+    /**
+     * @param PageInterface $page
+     *
+     * @return void
+     */
+    public function delete(PageInterface $page)
+    {
+        $objectManager = $this->getObjectManager();
+        $objectManager->remove($page);
+        $objectManager->flush();
+    }
+
+    /**
+     * @param string $slug
+     *
+     * @return PageInterface
+     */
+    public function loadBySlug($slug)
+    {
+        return $this->getRepository()->findOneBy(array('slug' => $slug));
     }
 }

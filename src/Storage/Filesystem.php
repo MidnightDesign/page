@@ -5,7 +5,7 @@ namespace Midnight\Page\Storage;
 use Midnight\Block\Storage\StorageInterface as BlockStorageInterface;
 use Midnight\Page\PageInterface;
 
-class Filesystem implements StorageInterface
+class Filesystem extends AbstractStorage implements StorageInterface
 {
     /**
      * @var string
@@ -30,6 +30,7 @@ class Filesystem implements StorageInterface
      */
     public function save(PageInterface $page)
     {
+        $this->ensureSlug($page);
         $id = $page->getId();
         if (!$id) {
             $page->setId(uniqid());
@@ -104,5 +105,34 @@ class Filesystem implements StorageInterface
             }
         }
         return $pages;
+    }
+
+    /**
+     * @param PageInterface $page
+     *
+     * @return void
+     */
+    public function delete(PageInterface $page)
+    {
+        $path = $this->buildPath($page->getId());
+        unlink($path);
+        if (file_exists($path)) {
+            throw new \RuntimeException(sprintf('Could not delete %s', $path));
+        }
+    }
+
+    /**
+     * @param string $slug
+     *
+     * @return PageInterface
+     */
+    public function loadBySlug($slug)
+    {
+        foreach ($this->getAll() as $page) {
+            if ($page->getSlug() === $slug) {
+                return $page;
+            }
+        }
+        return null;
     }
 }

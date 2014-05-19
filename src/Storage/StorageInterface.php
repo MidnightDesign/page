@@ -24,4 +24,18 @@ interface StorageInterface
      * @return PageInterface[]
      */
     public function getAll();
+
+    /**
+     * @param PageInterface $page
+     *
+     * @return void
+     */
+    public function delete(PageInterface $page);
+
+    /**
+     * @param string $slug
+     *
+     * @return PageInterface|null
+     */
+    public function loadBySlug($slug);
 }
