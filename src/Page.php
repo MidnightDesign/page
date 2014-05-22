@@ -44,10 +44,15 @@ class Page implements PageInterface
 
     /**
      * @param BlockInterface $block
+     * @param integer|null   $position
      */
-    public function addBlock(BlockInterface $block)
+    public function addBlock(BlockInterface $block, $position = null)
     {
         $this->blocks[] = $block;
+        if (isset($this->blocks[$position])) {
+            $otherBlock = $this->blocks[$position];
+            $this->moveBlock($block, $otherBlock, PageInterface::BEFORE);
+        }
     }
 
     /**

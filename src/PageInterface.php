@@ -28,10 +28,11 @@ interface PageInterface
 
     /**
      * @param BlockInterface $block
+     * @param integer|null   $position
      *
      * @return void
      */
-    public function addBlock(BlockInterface $block);
+    public function addBlock(BlockInterface $block, $position = null);
 
     /**
      * @return string
