@@ -15,7 +15,7 @@
         }
     },
     "require": {
-        "midnight/block": "~0.1"
+        "midnight/block": "dev-master"
     },
     "require-dev": {
         "doctrine/orm": "~2.4"
