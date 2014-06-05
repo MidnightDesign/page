@@ -79,7 +79,7 @@ class Page implements PageInterface
     public function getBlock($blockId)
     {
         foreach ($this->getBlocks() as $block) {
-            if ($block->getId() === $blockId) {
+            if ((string)$block->getId() === $blockId) {
                 return $block;
             }
         }
