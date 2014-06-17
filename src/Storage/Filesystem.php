@@ -2,6 +2,7 @@
 
 namespace Midnight\Page\Storage;
 
+use InvalidArgumentException;
 use Midnight\Block\Storage\StorageInterface as BlockStorageInterface;
 use Midnight\Page\PageInterface;
 
@@ -49,6 +50,11 @@ class Filesystem extends AbstractStorage implements StorageInterface
      */
     private function buildPath($id)
     {
+        //@codeCoverageIgnoreStart
+        if (!$id) {
+            throw new InvalidArgumentException('No ID given.');
+        }
+        //@codeCoverageIgnoreEnd
         return $this->getDirectory() . DIRECTORY_SEPARATOR . $id;
     }
 
@@ -65,10 +71,10 @@ class Filesystem extends AbstractStorage implements StorageInterface
      */
     public function setDirectory($directory)
     {
-        if(!file_exists($directory)) {
+        if (!file_exists($directory)) {
             @mkdir($directory, 0777, true);
         }
-        if(!file_exists($directory)) {
+        if (!file_exists($directory)) {
             throw new \RuntimeException(sprintf('Couldn\'t create "%s".', $directory));
         }
         if (!is_readable($directory)) {
@@ -88,17 +94,25 @@ class Filesystem extends AbstractStorage implements StorageInterface
      */
     public function load($id)
     {
+        $path = $this->buildPath($id);
+        if (!file_exists($path)) {
+            return null;
+        }
         /** @var PageInterface $page */
-        $page = unserialize(file_get_contents($this->buildPath($id)));
+        $page = unserialize(file_get_contents($path));
 
         $blocks = array();
         foreach ($page->getBlocks() as $block) {
             $blocks[] = $this->blockStorage->load($block->getId());
         }
         $pageRefl = new \ReflectionObject($page);
-        $blocksRefl = $pageRefl->getProperty('blocks');
-        $blocksRefl->setAccessible(true);
-        $blocksRefl->setValue($page, $blocks);
+        //@codeCoverageIgnoreStart
+        if ($pageRefl->hasProperty('blocks')) {
+            $blocksRefl = $pageRefl->getProperty('blocks');
+            $blocksRefl->setAccessible(true);
+            $blocksRefl->setValue($page, $blocks);
+        }
+        //@codeCoverageIgnoreEnd
 
         return $page;
     }
@@ -128,9 +142,11 @@ class Filesystem extends AbstractStorage implements StorageInterface
     {
         $path = $this->buildPath($page->getId());
         unlink($path);
+        //@codeCoverageIgnoreStart
         if (file_exists($path)) {
             throw new \RuntimeException(sprintf('Could not delete %s', $path));
         }
+        //@codeCoverageIgnoreEnd
     }
 
     /**

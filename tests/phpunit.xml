@@ -6,6 +6,12 @@
         <directory suffix=".php">MidnightTest/</directory>
     </testsuite>
     <filter>
+        <whitelist>
+            <directory suffix=".php">../src</directory>
+            <exclude>
+                <directory>../src/Util/Urlizer.php</directory>
+            </exclude>
+        </whitelist>
         <blacklist>
             <directory>../vendor/</directory>
         </blacklist>
