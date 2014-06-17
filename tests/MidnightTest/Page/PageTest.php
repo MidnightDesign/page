@@ -3,6 +3,7 @@
 namespace MidnightTest\Page;
 
 use Midnight\Page\Page;
+use Midnight\Page\PageInterface;
 use PHPUnit_Framework_TestCase;
 
 class PageTest extends PHPUnit_Framework_TestCase
@@ -97,5 +98,68 @@ class PageTest extends PHPUnit_Framework_TestCase
         $slug = 'test-slug';
         $page->setSlug($slug);
         $this->assertEquals($slug, $page->getSlug());
+    }
+
+    public function testMoveBlock()
+    {
+        $page = new Page();
+        $blockOne = $this->getMock('Midnight\Block\BlockInterface');
+        $blockTwo = $this->getMock('Midnight\Block\BlockInterface');
+        $page->add($blockOne);
+        $page->add($blockTwo);
+        $page->moveBlock($blockTwo, $blockOne, PageInterface::BEFORE);
+        $blocks = $page->getBlocks();
+        $this->assertSame($blockTwo, $blocks[0]);
+        $this->assertSame($blockOne, $blocks[1]);
+    }
+
+    public function testMoveBlockAfter()
+    {
+        $page = new Page();
+        $blockOne = $this->getMock('Midnight\Block\BlockInterface');
+        $blockTwo = $this->getMock('Midnight\Block\BlockInterface');
+        $blockThree = $this->getMock('Midnight\Block\BlockInterface');
+        $page->add($blockOne);
+        $page->add($blockTwo);
+        $page->add($blockThree);
+        $page->moveBlock($blockThree, $blockOne, PageInterface::AFTER);
+        $blocks = $page->getBlocks();
+        $this->assertSame($blockOne, $blocks[0]);
+        $this->assertSame($blockThree, $blocks[1]);
+        $this->assertSame($blockTwo, $blocks[2]);
+    }
+
+    /**
+     * @expectedException \Midnight\Block\Exception\BlockNotFoundException
+     */
+    public function testUnknownReferenceBlockThrowsException()
+    {
+        $page = new Page();
+        $blockOne = $this->getMock('Midnight\Block\BlockInterface');
+        $blockTwo = $this->getMock('Midnight\Block\BlockInterface');
+        $page->add($blockOne);
+        $page->moveBlock($blockOne, $blockTwo, PageInterface::BEFORE);
+    }
+
+    public function testSetPosition()
+    {
+        $page = new Page();
+        $blockOne = $this->getMock('Midnight\Block\BlockInterface');
+        $blockTwo = $this->getMock('Midnight\Block\BlockInterface');
+        $page->add($blockOne);
+        $page->add($blockTwo);
+        $page->setPosition($blockTwo, 0);
+        $blocks = $page->getAll();
+        $this->assertSame($blockTwo, $blocks[0]);
+        $this->assertSame($blockOne, $blocks[1]);
+    }
+
+    public function testRemove()
+    {
+        $page = new Page();
+        $block = $this->getMock('Midnight\Block\BlockInterface');
+        $page->add($block);
+        $page->remove($block);
+        $this->assertEmpty($page->getAll());
     }
 }

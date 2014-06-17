@@ -3,9 +3,11 @@
 namespace Midnight\Page;
 
 use Midnight\Block\BlockInterface;
-use Traversable;
+use Midnight\Block\BlockList;
+use Midnight\Block\BlockListInterface;
+use Midnight\Block\Exception\BlockNotFoundException;
 
-class Page implements PageInterface
+class Page implements PageInterface, BlockListInterface
 {
     /**
      * @var string
@@ -16,13 +18,18 @@ class Page implements PageInterface
      */
     private $name;
     /**
-     * @var BlockInterface[]|Traversable
+     * @var BlockListInterface
      */
-    private $blocks = array();
+    private $blockList;
     /**
      * @var string
      */
     private $slug;
+
+    public function __construct()
+    {
+        $this->blockList = new BlockList();
+    }
 
     /**
      * @return string
@@ -44,15 +51,11 @@ class Page implements PageInterface
 
     /**
      * @param BlockInterface $block
-     * @param integer|null   $position
+     * @param null           $position
      */
     public function addBlock(BlockInterface $block, $position = null)
     {
-        $this->blocks[] = $block;
-        if (isset($this->blocks[$position])) {
-            $otherBlock = $this->blocks[$position];
-            $this->moveBlock($block, $otherBlock, PageInterface::BEFORE);
-        }
+        $this->blockList->add($block, $position);
     }
 
     /**
@@ -91,15 +94,7 @@ class Page implements PageInterface
      */
     public function getBlocks()
     {
-        if (empty($this->blocks)) {
-            $this->blocks = array();
-        }
-        //@codeCoverageIgnoreStart
-        if ($this->blocks instanceof Traversable) {
-            $this->blocks = iterator_to_array($this->blocks);
-        }
-        //@codeCoverageIgnoreEnd
-        return $this->blocks;
+        return $this->blockList->getAll();
     }
 
     /**
@@ -109,12 +104,7 @@ class Page implements PageInterface
      */
     public function removeBlock(BlockInterface $block)
     {
-        $blocks = $this->getBlocks();
-        $keys = array_keys($blocks, $block);
-        foreach ($keys as $k) {
-            unset($blocks[$k]);
-        }
-        $this->blocks = $blocks;
+        $this->blockList->remove($block);
     }
 
     /**
@@ -122,21 +112,26 @@ class Page implements PageInterface
      * @param BlockInterface $otherBlock
      * @param string         $beforeOrAfter
      *
+     * @throws BlockNotFoundException
      * @return void
      */
     public function moveBlock($block, $otherBlock, $beforeOrAfter)
     {
-        $blocks = $this->getBlocks();
-        $offset = $beforeOrAfter === self::BEFORE ? 0 : 1;
-        $this->moveElement($blocks, array_search($block, $blocks, true), array_search($otherBlock, $blocks, true) + $offset);
-
-        $this->blocks = $blocks;
-    }
-
-    private function moveElement(&$array, $from, $to)
-    {
-        $out = array_splice($array, $from, 1);
-        array_splice($array, $to, 0, $out);
+        $position = null;
+        $blocks = $this->blockList->getAll();
+        foreach ($blocks as $index => $block) {
+            if ($block === $otherBlock) {
+                $position = $index;
+                continue;
+            }
+        }
+        if (null === $position) {
+            throw new BlockNotFoundException('The reference block could not be found in this page.');
+        }
+        if ($beforeOrAfter === self::AFTER) {
+            $position++;
+        }
+        $this->blockList->setPosition($block, $position);
     }
 
     /**
@@ -153,5 +148,45 @@ class Page implements PageInterface
     public function setSlug($slug)
     {
         $this->slug = $slug;
+    }
+
+    /**
+     * @param BlockInterface $block
+     * @param int|null       $position
+     *
+     * @return void
+     */
+    public function add(BlockInterface $block, $position = null)
+    {
+        $this->blockList->add($block, $position);
+    }
+
+    /**
+     * @param BlockInterface $block
+     * @param int            $position
+     *
+     * @return void
+     */
+    public function setPosition(BlockInterface $block, $position)
+    {
+        $this->blockList->setPosition($block, $position);
+    }
+
+    /**
+     * @return BlockInterface[]
+     */
+    public function getAll()
+    {
+        return $this->blockList->getAll();
+    }
+
+    /**
+     * @param BlockInterface $block
+     *
+     * @return void
+     */
+    public function remove(BlockInterface $block)
+    {
+        $this->blockList->remove($block);
     }
 }
