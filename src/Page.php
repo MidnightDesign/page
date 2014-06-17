@@ -94,9 +94,11 @@ class Page implements PageInterface
         if (empty($this->blocks)) {
             $this->blocks = array();
         }
+        //@codeCoverageIgnoreStart
         if ($this->blocks instanceof Traversable) {
             $this->blocks = iterator_to_array($this->blocks);
         }
+        //@codeCoverageIgnoreEnd
         return $this->blocks;
     }
 
@@ -124,17 +126,17 @@ class Page implements PageInterface
      */
     public function moveBlock($block, $otherBlock, $beforeOrAfter)
     {
-        function moveElement(&$array, $from, $to)
-        {
-            $out = array_splice($array, $from, 1);
-            array_splice($array, $to, 0, $out);
-        }
-
         $blocks = $this->getBlocks();
         $offset = $beforeOrAfter === self::BEFORE ? 0 : 1;
-        moveElement($blocks, array_search($block, $blocks, true), array_search($otherBlock, $blocks, true) + $offset);
+        $this->moveElement($blocks, array_search($block, $blocks, true), array_search($otherBlock, $blocks, true) + $offset);
 
         $this->blocks = $blocks;
+    }
+
+    private function moveElement(&$array, $from, $to)
+    {
+        $out = array_splice($array, $from, 1);
+        array_splice($array, $to, 0, $out);
     }
 
     /**

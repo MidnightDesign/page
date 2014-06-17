@@ -1,6 +1,6 @@
 {
     "name": "midnight/page",
-    "description": "Pages containing blocks",
+    "description": "Barebones CMS pages package intended to be used by midnight/cms-module",
     "minimum-stability": "stable",
     "license": "MIT",
     "authors": [
@@ -17,7 +17,7 @@
     "require": {
         "midnight/block": "dev-master"
     },
-    "require-dev": {
-        "doctrine/orm": "~2.4"
+    "suggest": {
+        "doctrine/orm": "Doctrine ORM persistence of pages"
     }
 }
