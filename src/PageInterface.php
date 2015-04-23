@@ -2,9 +2,10 @@
 
 namespace Midnight\Page;
 
+use Midnight\Block\BlockContainerInterface;
 use Midnight\Block\BlockInterface;
 
-interface PageInterface
+interface PageInterface extends BlockContainerInterface
 {
     const BEFORE = 'before';
     const AFTER = 'after';
@@ -22,19 +23,6 @@ interface PageInterface
     public function setId($id);
 
     /**
-     * @return BlockInterface[]
-     */
-    public function getBlocks();
-
-    /**
-     * @param BlockInterface $block
-     * @param integer|null   $position
-     *
-     * @return void
-     */
-    public function addBlock(BlockInterface $block, $position = null);
-
-    /**
      * @return string
      */
     public function getName();
@@ -45,22 +33,6 @@ interface PageInterface
      * @return BlockInterface
      */
     public function getBlock($blockId);
-
-    /**
-     * @param BlockInterface $block
-     *
-     * @return void
-     */
-    public function removeBlock(BlockInterface $block);
-
-    /**
-     * @param BlockInterface $block
-     * @param BlockInterface $otherBlock
-     * @param string         $beforeOrAfter
-     *
-     * @return void
-     */
-    public function moveBlock($block, $otherBlock, $beforeOrAfter);
 
     /**
      * @param $slug

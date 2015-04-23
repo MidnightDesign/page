@@ -15,10 +15,12 @@
         }
     },
     "require": {
+        "php": "~5.5|~7.0",
         "midnight/block": "dev-master"
     },
     "require-dev": {
-        "doctrine/orm": "~2.4"
+        "doctrine/orm": "~2.4",
+        "phpunit/phpunit": "~4.6"
     },
     "suggest": {
         "doctrine/orm": "Doctrine ORM persistence of pages"

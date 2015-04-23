@@ -36,14 +36,13 @@ class FilesystemTest extends PHPUnit_Framework_TestCase
     /**
      * @var string
      */
-    private $blockId = 'myBlockId';
-    /**
-     * @var string
-     */
     private $pageId = 'myPageId';
 
     public static function setUpBeforeClass()
     {
+        set_error_handler(function () {
+            // Ignore
+        });
         self::$directory = __DIR__ . '/generated';
         mkdir(self::$directory);
     }
@@ -51,6 +50,7 @@ class FilesystemTest extends PHPUnit_Framework_TestCase
     public static function tearDownAfterClass()
     {
         self::delDir(self::$directory);
+        restore_error_handler();
     }
 
     public function setUp()
@@ -65,7 +65,7 @@ class FilesystemTest extends PHPUnit_Framework_TestCase
         $this->page
             ->expects($this->any())
             ->method('getBlocks')
-            ->will($this->returnValue(array($this->block)));
+            ->will($this->returnValue([$this->block]));
         $this->page
             ->expects($this->any())
             ->method('getId')
@@ -96,7 +96,7 @@ class FilesystemTest extends PHPUnit_Framework_TestCase
         $this->page
             ->expects($this->any())
             ->method('getBlocks')
-            ->will($this->returnValue(array($this->block)));
+            ->will($this->returnValue([$this->block]));
         $this->storage->save($this->page);
     }
 
@@ -190,7 +190,7 @@ class FilesystemTest extends PHPUnit_Framework_TestCase
     private static function emptyDir($dir)
     {
         chmod($dir, 0777);
-        $files = array_diff(scandir($dir), array('.', '..'));
+        $files = array_diff(scandir($dir), ['.', '..']);
         foreach ($files as $file) {
             (is_dir("$dir/$file")) ? self::delDir("$dir/$file") : unlink("$dir/$file");
         }

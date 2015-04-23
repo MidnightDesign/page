@@ -1,19 +1,16 @@
 <phpunit
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="http://schema.phpunit.de/3.7/phpunit.xsd"
-        bootstrap="bootstrap.php">
+        bootstrap="./tests/bootstrap.php">
     <testsuite name="Midnight\Page">
-        <directory suffix=".php">MidnightTest/</directory>
+        <directory suffix=".php">./tests/MidnightTest/</directory>
     </testsuite>
     <filter>
         <whitelist>
-            <directory suffix=".php">../src</directory>
+            <directory suffix=".php">./src</directory>
             <exclude>
-                <directory>../src/Util/Urlizer.php</directory>
+                <directory>./src/Util/Urlizer.php</directory>
             </exclude>
         </whitelist>
-        <blacklist>
-            <directory>../vendor/</directory>
-        </blacklist>
     </filter>
 </phpunit>
