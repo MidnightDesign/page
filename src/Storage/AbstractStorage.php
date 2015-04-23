@@ -2,14 +2,14 @@
 
 namespace Midnight\Page\Storage;
 
+use Cocur\Slugify\Slugify;
 use Midnight\Page\PageInterface;
-use Midnight\Page\Util\Urlizer;
 
 abstract class AbstractStorage implements StorageInterface
 {
     /**
      * @param PageInterface $page
-     * @param int           $suffix
+     * @param int $suffix
      */
     protected function ensureSlug(PageInterface $page, $suffix = 0)
     {
@@ -18,7 +18,7 @@ abstract class AbstractStorage implements StorageInterface
             if ($suffix > 1) {
                 $name .= ' ' . $suffix;
             }
-            $slug = Urlizer::urlize($name);
+            $slug = (new Slugify())->slugify($name);
             $pages = $this->getAll();
             foreach ($pages as $p) {
                 if ($p->getSlug() === $slug) {
