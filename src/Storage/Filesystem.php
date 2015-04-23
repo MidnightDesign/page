@@ -18,7 +18,7 @@ class Filesystem extends AbstractStorage implements StorageInterface
      */
     private $blockStorage;
 
-    function __construct($directory, BlockStorageInterface $blockStorage)
+    public function __construct($directory, BlockStorageInterface $blockStorage)
     {
         $this->blockStorage = $blockStorage;
         $this->setDirectory($directory);
@@ -72,7 +72,11 @@ class Filesystem extends AbstractStorage implements StorageInterface
     public function setDirectory($directory)
     {
         if (!file_exists($directory)) {
-            @mkdir($directory, 0777, true);
+            set_error_handler(function () {
+                // Ignore errors
+            });
+            mkdir($directory, 0777, true);
+            restore_error_handler();
         }
         if (!file_exists($directory)) {
             throw new \RuntimeException(sprintf('Couldn\'t create "%s".', $directory));
@@ -101,7 +105,7 @@ class Filesystem extends AbstractStorage implements StorageInterface
         /** @var PageInterface $page */
         $page = unserialize(file_get_contents($path));
 
-        $blocks = array();
+        $blocks = [];
         foreach ($page->getBlocks() as $block) {
             $blocks[] = $this->blockStorage->load($block->getId());
         }
@@ -122,7 +126,7 @@ class Filesystem extends AbstractStorage implements StorageInterface
      */
     public function getAll()
     {
-        $pages = array();
+        $pages = [];
         $dir = $this->getDirectory();
         $handle = opendir($dir);
         while ($file = readdir($handle)) {
