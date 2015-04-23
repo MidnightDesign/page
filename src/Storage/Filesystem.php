@@ -78,15 +78,7 @@ class Filesystem extends AbstractStorage implements StorageInterface
             mkdir($directory, 0777, true);
             restore_error_handler();
         }
-        if (!file_exists($directory)) {
-            throw new \RuntimeException(sprintf('Couldn\'t create "%s".', $directory));
-        }
-        if (!is_readable($directory)) {
-            throw new \RuntimeException(sprintf('"%s" is not readable.', $directory));
-        }
-        if (!is_writable($directory)) {
-            throw new \RuntimeException(sprintf('"%s" is not writable.', $directory));
-        }
+        $this->checkDirectory($directory);
         $directory = realpath(($directory));
         $this->directory = $directory;
     }
@@ -166,5 +158,21 @@ class Filesystem extends AbstractStorage implements StorageInterface
             }
         }
         return null;
+    }
+
+    /**
+     * @param string $directory
+     */
+    private function checkDirectory($directory)
+    {
+        if (!file_exists($directory)) {
+            throw new \RuntimeException(sprintf('Couldn\'t create "%s".', $directory));
+        }
+        if (!is_readable($directory)) {
+            throw new \RuntimeException(sprintf('"%s" is not readable.', $directory));
+        }
+        if (!is_writable($directory)) {
+            throw new \RuntimeException(sprintf('"%s" is not writable.', $directory));
+        }
     }
 }
